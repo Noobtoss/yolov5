@@ -27,27 +27,63 @@ class Albumentations:
         try:
             import albumentations as A
             check_version(A.__version__, '1.0.3', hard=True)  # version requirement
+            version = 0 #0=standAug 1=noAug 2=selectAug 3=selectAug+
 
-            T = [
-                A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
-                A.Blur(p=0.01),
-                A.MedianBlur(p=0.01),
-                A.ToGray(p=0.01),
-                A.CLAHE(p=0.01),
-                A.RandomBrightnessContrast(p=0.0),
-                A.RandomGamma(p=0.0),
-                A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
-            self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
+            if version == 0:
+                T = [
+                    A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
+                    A.Blur(p=0.01),
+                    A.MedianBlur(p=0.01),
+                    A.ToGray(p=0.01),
+                    A.CLAHE(p=0.01),
+                    A.RandomBrightnessContrast(p=0.0),
+                    A.RandomGamma(p=0.0),
+                    A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
+                self.transform = [A.Compose(T, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))]
+            
+            if verion == 1:
+                T = [ A.Blur(p=0.00)]
+                self.transform = [A.Compose(T, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))]
+            
+            if version == 2:
+                 T1 = [  A.Equalize(p=0.2)]
+                 T2 = [  A.RGBShift(p=0.2, r_shift_limit=30, g_shift_limit=30, b_shift_limit=30)]
+                 T3 = [  A.HueSaturationValue(p=0.2, hue_shift_limit=30, sat_shift_limit=40, val_shift_limit=30)]
+                 T4 = [  A.ISONoise(p=0.2)]
+                 T5 = [  A.RandomBrightnessContrast(p=0.2, brightness_limit=0.3, contrast_limit=0.3)]
+                 self.transform = [
+                            A.Compose(T1, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T2, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T2, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T3, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T4, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T5, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
+                            ]
+
+            if version == 3:
+                 T1 = [  A.Equalize(p=0.2)]
+                 T2 = [  A.RGBShift(p=0.4, r_shift_limit=30, g_shift_limit=30, b_shift_limit=30)]
+                 T3 = [  A.HueSaturationValue(p=0.4, hue_shift_limit=30, sat_shift_limit=40, val_shift_limit=30)]
+                 T4 = [  A.ISONoise(p=0.2)]
+                 T5 = [  A.RandomBrightnessContrast(p=0.2, brightness_limit=0.3, contrast_limit=0.3)]
+                 self.transform = [
+                            A.Compose(T1, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T2, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T2, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T3, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T4, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'])),
+                            A.Compose(T5, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
+                            ]
 
             LOGGER.info(prefix + ', '.join(f'{x}'.replace('always_apply=False, ', '') for x in T if x.p))
-        except ImportError:  # package not installed, skip
+        except ImportError:#  # package not installed, skip
             pass
         except Exception as e:
             LOGGER.info(f'{prefix}{e}')
 
     def __call__(self, im, labels, p=1.0):
         if self.transform and random.random() < p:
-            new = self.transform(image=im, bboxes=labels[:, 1:], class_labels=labels[:, 0])  # transformed
+            new = random.choice(self.transform)(image=im, bboxes=labels[:, 1:], class_labels=labels[:, 0])  # transformed
             im, labels = new['image'], np.array([[c, *b] for c, b in zip(new['class_labels'], new['bboxes'])])
         return im, labels
 
