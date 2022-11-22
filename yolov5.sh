@@ -2,6 +2,7 @@
 #SBATCH --job-name=yolov5        # Kurzname des Jobs
 #SBATCH --output=R-%j.out
 #SBATCH --partition=p1
+#SBATCH --qos=gpuultimate
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1                # Anzahl Knoten
 #SBATCH --ntasks=1               # Gesamtzahl der Tasks über alle Knoten hinweg
@@ -12,12 +13,11 @@
 img=640
 batch=32 #128
 epochs=200
-data=/mnt/md0/user/schmittth/datasets/semmel/semmel11/info.yaml
-cfg=yolov5s.yaml #yolov5m.yaml
+data=/mnt/md0/user/schmittth/datasets/semmel/setups/semmel15.yaml
+cfg=yolov5s.yaml #yolov5m.yaml #yolov5l.yaml #yolov5x.yaml
 weights=None
 hyp=hyp.scratch-low.yaml
 name=None
-valOn=best.pt #last.pt
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -29,7 +29,6 @@ while [ $# -gt 0 ]; do
     -h|-hyp|--hyp)         hyp="$2"    ;;
     -c|-cfg|--cfg)         cfg="$2"    ;;
     -w|-weights|--weights) weights="$2";;
-    -v|-valOn|--valOn)     valOn="$2"  ;;
     *)
       printf "***************************\n"
       printf "* Error: Invalid argument.*\n"
@@ -69,13 +68,11 @@ conda activate yolov5
 
 srun python train.py --img $img --batch $batch --epochs $epochs --data $data --name $name-$SLURM_JOB_ID --cfg $cfg --weights $weights --hyp $hyp --device 0 --cache ram
 
-#srun python val.py --img $img --data $data --name ${name}Test-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/$valOn --task test
-
-#for filename in $(dirname $data)/*.yaml; do
-#	: ${filename%.*}
-#	: $(basename $_)
-#	: ${_,,}
-#	: ${_^}
-#	srun python val.py --img $img --data $filename --name $name$_-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/$valOn
-#	done
-
+for filename in `echo $data | sed "s/.yaml/*.yaml/"`; do
+        : ${filename%.*}
+        : $(basename $_)
+        : ${_,,}
+        : ${_^}
+	srun python val.py --img $img --data $filename --name "$name$_Best-$SLURM_JOB_ID" --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt
+	srun python val.py --img $img --data $filename --name "$name$_Last-$SLURM_JOB_ID" --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt
+	: done
