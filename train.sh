@@ -8,7 +8,6 @@
 #SBATCH --ntasks=1               # Gesamtzahl der Tasks über alle Knoten hinweg
 #SBATCH --cpus-per-task=4        # CPU Kerne pro Task (>1 für multi-threaded Tasks)
 #SBATCH --mem=20G                # RAM pro CPU Kern
-#SBATCH --time=12:00:00          # Maximale Laufzeit (HH:MM:SS)
 
 img=640
 batch=32 #128
@@ -18,6 +17,7 @@ cfg=yolov5s.yaml #yolov5m.yaml #yolov5l.yaml #yolov5x.yaml
 weights=None
 hyp=hyp.scratch-low.yaml
 name=None
+patience=50
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -29,6 +29,7 @@ while [ $# -gt 0 ]; do
     -h|-hyp|--hyp)         hyp="$2"    ;;
     -c|-cfg|--cfg)         cfg="$2"    ;;
     -w|-weights|--weights) weights="$2";;
+    -p|-patience|--patience) patience="$2";;
     *)
       printf "***************************\n"
       printf "* Error: Invalid argument.*\n"
@@ -66,7 +67,7 @@ eval "$(conda shell.bash hook)"
 
 conda activate yolov5
 
-srun python train.py --img $img --batch $batch --epochs $epochs --data $data --name $name-$SLURM_JOB_ID --cfg $cfg --weights $weights --hyp $hyp --device 0 --cache ram
+srun python train.py --img $img --batch $batch --epochs $epochs --data $data --name $name-$SLURM_JOB_ID --cfg $cfg --weights $weights --hyp $hyp --patience $patience --device 0 --cache ram
 
 for filename in `echo $data | sed "s/.yaml/*.yaml/"`; do
 	val_name=${filename#"${data%.*}"}

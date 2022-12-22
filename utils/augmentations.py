@@ -27,7 +27,7 @@ class Albumentations:
         try:
             import albumentations as A
             check_version(A.__version__, '1.0.3', hard=True)  # version requirement
-            version = 4  #0=standAug 1=noAug 2=selectAug 3=selectAug+ 4=standAug_selectAug+_scaleAug 5=scaleAug
+            version = 5  #0=standAug 1=noAug 2=selectAug 3=selectAug+ 4=standAug_selectAug+_scaleAug 5=scaleAug
 
             if version == 0:
                 
@@ -42,7 +42,7 @@ class Albumentations:
                 
                 self.transform = [A.Compose(T, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))]
             
-            if verion == 1:
+            if version == 1:
                 
                 T = [ A.Blur(p=0.00)]
                 
@@ -140,7 +140,6 @@ def denormalize(x, mean=IMAGENET_MEAN, std=IMAGENET_STD):
     for i in range(3):
         x[:, i] = x[:, i] * std[i] + mean[i]
     return x
-
 
 def augment_hsv(im, hgain=0.5, sgain=0.5, vgain=0.5):
     # HSV color-space augmentation
