@@ -27,7 +27,7 @@ class Albumentations:
         try:
             import albumentations as A
             check_version(A.__version__, '1.0.3', hard=True)  # version requirement
-            version = 5  #0=standAug 1=noAug 2=selectAug 3=selectAug+ 4=standAug_selectAug+_scaleAug 5=scaleAug
+            version = 0  #0=standAug 1=noAug 2=selectAug 3=selectAug+ 4=standAug_selectAug+_scaleAug 5=scaleAug
 
             if version == 0:
                 
