@@ -7,7 +7,7 @@
 #SBATCH --nodes=1                # Anzahl Knoten
 #SBATCH --ntasks=1               # Gesamtzahl der Tasks über alle Knoten hinweg
 #SBATCH --cpus-per-task=4        # CPU Kerne pro Task (>1 für multi-threaded Tasks)
-#SBATCH --mem=20G                # RAM pro CPU Kern
+#SBATCH --mem=64G                # RAM pro CPU Kern #20G #32G #64G
 
 img=640
 batch=32 #128
