@@ -23,6 +23,7 @@ class Albumentations:
     # YOLOv5 Albumentations class (optional, only used if package is installed)
     def __init__(self, size=640):
         self.transform = None
+        self.transform_pre = None
         prefix = colorstr('albumentations: ')
         try:
             import albumentations as A
