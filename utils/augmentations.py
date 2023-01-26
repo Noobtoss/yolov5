@@ -45,7 +45,7 @@ class Albumentations:
             
             if version == 1:
                 
-                T = [A.Blur(p=0.00)]
+                T = [A.Blur(p=0.0)]
                 
                 self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
             
@@ -113,23 +113,23 @@ class Albumentations:
             if version == 5:
 
                 T = [
-                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1),
-                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1)]
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0)]
 
                 self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', min_area=100, label_fields=['class_labels']))
 
             if version == 6:
 
-                T_pre = [A.CoarseDropout(max_holes=20, max_height=size*0.05, max_width=size*0.05, min_holes=10, min_height=size*0.01, min_width=size*0.01, fill_value=0, p=0.6)]
+                T_pre = [A.CoarseDropout(max_holes=20, max_height=0.03, max_width=0.03, min_holes=10, min_height=0.01, min_width=0.01, fill_value=0, p=0.5)]
 
                 T = [
-                    A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.6),
-                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1),
-                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1)]
+                    A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.5),
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0)]
 
                 self.transform_pre = A.Compose(T_pre)
                 self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', min_area=100, label_fields=['class_labels']))
-
+            
             LOGGER.info(prefix + ', '.join(f'{x}'.replace('always_apply=False, ', '') for x in T if x.p))
         except ImportError:#  # package not installed, skip
             pass
