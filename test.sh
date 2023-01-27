@@ -10,8 +10,7 @@
 #SBATCH --mem=64G                # RAM pro CPU Kern #20G #32G #64G
 
 img=640
-batch=32 #128
-data=/mnt/md0/user/schmittth/datasets/semmel/setups/semmel17.yaml
+data=/mnt/md0/user/schmittth/datasets/semmel/setups/semmel17.yaml #either serves as data for val.py or source for detect.py
 weights=None
 name=None
 task=test
@@ -19,11 +18,10 @@ task=test
 while [ $# -gt 0 ]; do
   case "$1" in
     -i|-img|--img)         img="$2"    ;;
-    -b|-batch|--batch)     batch="$2"  ;;
     -d|-data|--data)       data="$2"   ;;
+    -w|-weights|--weights) weights="$2";;
     -n|-name|--name)       name="$2"   ;;
-    -w|-weights|--weights) weights="$2";;
-    -w|-weights|--weights) weights="$2";;
+    -t|-task)              task="$2"   ;;
     *)
       printf "***************************\n"
       printf "* Error: Invalid argument.*\n"
@@ -35,7 +33,7 @@ while [ $# -gt 0 ]; do
 done
 
 if [ $name == "None" ]; then
-    name=$data
+    name=$(basename $data)
 fi
 
 module purge
@@ -44,57 +42,15 @@ eval "$(conda shell.bash hook)"
 
 conda activate yolov5
 
-srun python train.py --img $img --batch $batch --epochs $epochs --data $data --name $name-$SLURM_JOB_ID --cfg $cfg --weights $weights --hyp $hyp --patience $patience --device 0 --cache ram
+if [ $task -eq val ] || [ $task -eq test ]; then
 
-for filename in `echo $data | sed "s/.yaml/*.yaml/"`; do
-	val_name=${filename#"${data%.*}"}
-	val_name=${val_name%.*}
-	if [ -n "$val_name" ]; then
-		val_name=${val_name,,}
-		val_name=${val_name^}
-		val_name=$name$val_name
-	else
-		val_name=$name
-	fi
+    srun python val.py --img $img --data $data --name $task$name --weights $weights --task $task
 
-	if [[ $val_name == *"val"* ]]; then
-		srun python val.py --img $img --data $filename --name $val_name"Best"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task val
-		srun python val.py --img $img --data $filename --name $val_name"Last"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task val
-	fi
+elif [ $task -eq detect ]; then
 
-	if [[ $val_name == *"test"* ]]; then
-                srun python val.py --img $img --data $filename --name $val_name"Best"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task test
-                srun python val.py --img $img --data $filename --name $val_name"Last"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task test
-        fi
+    #python detect.py --img 640 --source custom/valsetDIV2K/gray --name test --weights custom/best.pt --nosave --save-txt --save-crop --save-conf
+    srun python detect.py --img $img --source $data --name $task$name --weights $weights --nosave --save-txt --save-crop --save-conf
 
-done
-
-
-
-
-
-
-
-
-#!/bin/bash
-#SBATCH --job-name=yolov5        # Kurzname des Jobs
-#SBATCH --output=T-%j.out
-#SBATCH --partition=p2
-#SBATCH --qos=gpuultimate
-#SBATCH --gres=gpu:1
-#SBATCH --nodes=1                # Anzahl Knoten
-#SBATCH --ntasks=1               # Gesamtzahl der Tasks über alle Knoten hinweg
-#SBATCH --cpus-per-task=4        # CPU Kerne pro Task (>1 für multi-threaded Tasks)
-#SBATCH --mem=20G                # RAM pro CPU Kern
-
-data=/mnt/md0/user/schmittth/test/test.yaml
-weights=/mnt/md0/user/schmittth/test/best.pt
-#weights=/mnt/md0/user/schmittth/test/baseline.pt
-
-module purge
-module load python/anaconda3
-eval "$(conda shell.bash hook)"
-
-conda activate yolov5
-
-srun python val.py --img 640 --data $data --name "test" --weights $weights --save-txt --save-hybrid --save-conf --save-json --conf-thres 0.1 --iou-thres 0.0
+else
+  echo "Unknown Task"
+fi

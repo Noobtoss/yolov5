@@ -12,24 +12,24 @@
 img=640
 batch=32 #128
 epochs=200
+patience=50
 data=/mnt/md0/user/schmittth/datasets/semmel/setups/semmel17.yaml
+hyp=hyp.scratch-low.yaml
 cfg=yolov5s.yaml #yolov5m.yaml #yolov5l.yaml #yolov5x.yaml
 weights=None
-hyp=hyp.scratch-low.yaml
 name=None
-patience=50
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    -i|-img|--img)         img="$2"    ;;
-    -b|-batch|--batch)     batch="$2"  ;;
-    -e|-epochs|--epochs)   epochs="$2" ;;
-    -d|-data|--data)       data="$2"   ;;
-    -n|-name|--name)       name="$2"   ;;
-    -h|-hyp|--hyp)         hyp="$2"    ;;
-    -c|-cfg|--cfg)         cfg="$2"    ;;
-    -w|-weights|--weights) weights="$2";;
+    -i|-img|--img)           img="$2"     ;;
+    -b|-batch|--batch)       batch="$2"   ;;
+    -e|-epochs|--epochs)     epochs="$2"  ;;
     -p|-patience|--patience) patience="$2";;
+    -d|-data|--data)         data="$2"    ;;
+    -h|-hyp|--hyp)           hyp="$2"     ;;
+    -c|-cfg|--cfg)           cfg="$2"     ;;
+    -w|-weights|--weights)   weights="$2" ;;
+    -n|-name|--name)         name="$2"    ;;
     *)
       printf "***************************\n"
       printf "* Error: Invalid argument.*\n"
