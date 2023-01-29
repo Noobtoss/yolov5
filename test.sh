@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=yolov5        # Kurzname des Jobs
-#SBATCH --output=R-%j.out
+#SBATCH --output=T-%j.out
 #SBATCH --partition=p2
 #SBATCH --qos=gpuultimate
 #SBATCH --gres=gpu:1
@@ -15,13 +15,18 @@ weights=None
 name=None
 task=test
 
+#python detect.py --img 640 --source custom/valsetDIV2K/gray --name test --weights custom/best.pt --nosave --save-txt --save-crop --save-conf
+#sbatch test.sh --data /mnt/md0/user/schmittth/datasets/semmel/setups/semmel27.yaml --weights /mnt/md0/user/schmittth/resultsYolov5/dropout/train/semmel27Yolov5xHyp.scratch-low-1162116/weights/best.pt --task val
+#sbatch test.sh --data /mnt/md0/user/schmittth/datasets/semmel/setups/semmel27.yaml --weights /mnt/md0/user/schmittth/resultsYolov5/dropout/train/semmel27Yolov5xHyp.scratch-low-1162116/weights/best.pt --task test
+#sbatch test.sh --data /mnt/md0/user/schmittth/datasets/semmel/testsets/testset0/gray/images --weights /mnt/md0/user/schmittth/resultsYolov5/dropout/train/semmel27Yolov5xHyp.scratch-low-1162116/weights/best.pt --task detect
+
 while [ $# -gt 0 ]; do
   case "$1" in
     -i|-img|--img)         img="$2"    ;;
     -d|-data|--data)       data="$2"   ;;
     -w|-weights|--weights) weights="$2";;
     -n|-name|--name)       name="$2"   ;;
-    -t|-task)              task="$2"   ;;
+    -t|-task|--task)              task="$2"   ;;
     *)
       printf "***************************\n"
       printf "* Error: Invalid argument.*\n"
@@ -42,15 +47,19 @@ eval "$(conda shell.bash hook)"
 
 conda activate yolov5
 
-if [ $task -eq val ] || [ $task -eq test ]; then
+echo $task
 
+if [ $task == "val" ] || [ $task == "test" ]; then
+	
+    echo $task
     srun python val.py --img $img --data $data --name $task$name --weights $weights --task $task
 
-elif [ $task -eq detect ]; then
+elif [ $task == "detect" ]; then
 
-    #python detect.py --img 640 --source custom/valsetDIV2K/gray --name test --weights custom/best.pt --nosave --save-txt --save-crop --save-conf
+    echo $task
     srun python detect.py --img $img --source $data --name $task$name --weights $weights --nosave --save-txt --save-crop --save-conf
 
 else
   echo "Unknown Task"
+
 fi
