@@ -38,8 +38,14 @@ while [ $# -gt 0 ]; do
 done
 
 if [ $name == "None" ]; then
-    name=$(basename $data)
+     : $data
+     : ${_%.*}
+     : $(basename $_)
+     : ${_,,}
+     : ${_^}
+     name=$_
 fi
+echo $name
 
 module purge
 module load python/anaconda3
@@ -47,16 +53,12 @@ eval "$(conda shell.bash hook)"
 
 conda activate yolov5
 
-echo $task
-
 if [ $task == "val" ] || [ $task == "test" ]; then
 	
-    echo $task
     srun python val.py --img $img --data $data --name $task$name --weights $weights --task $task
 
 elif [ $task == "detect" ]; then
-
-    echo $task
+    
     srun python detect.py --img $img --source $data --name $task$name --weights $weights --nosave --save-txt --save-crop --save-conf
 
 else
