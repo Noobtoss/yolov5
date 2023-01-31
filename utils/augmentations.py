@@ -120,10 +120,10 @@ class Albumentations:
 
             if version == 6:
 
-                T_pre = [A.CoarseDropout(max_holes=20, max_height=0.03, max_width=0.03, min_holes=10, min_height=0.01, min_width=0.01, fill_value=0, p=0.02)]
+                T_pre = [A.CoarseDropout(max_holes=20, max_height=0.03, max_width=0.03, min_holes=10, min_height=0.01, min_width=0.01, fill_value=0, p=0.5)]
 
                 T = [
-                    A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.02),
+                    A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.5),
                     A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
                     A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0)]
 

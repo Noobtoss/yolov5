@@ -44,20 +44,13 @@ if [ $weights == "None" ]; then
         weights=${cfg%.*}.pt
 fi
 
-if [ $name == "None" ]; then
-        : $data
-	: ${_%.*}
-	: $(basename $_)
-        : ${_,,}
-        name=$_
-        : ${cfg%.*}
-        : ${_,,}
-        : ${_^}
-        name=$name$_
-        : ${hyp%.*}
-        : ${_,,}
-        : ${_^}
-        name=$name$_
+: $data
+: ${_%.*}
+: $(basename $_)
+runName=${_,,}
+
+if [ $name != "None" ]; then
+	runName=$runName$info
 fi
 
 export WANDB_API_KEY=95177947f5f36556806da90ea7a0bf93ed857d58
@@ -67,7 +60,7 @@ eval "$(conda shell.bash hook)"
 
 conda activate yolov5
 
-srun python train.py --img $img --batch $batch --epochs $epochs --data $data --name $name-$SLURM_JOB_ID --cfg $cfg --weights $weights --hyp $hyp --patience $patience --device 0 --cache ram
+srun python train.py --img $img --batch $batch --epochs $epochs --data $data --name $runName-$SLURM_JOB_ID --cfg $cfg --weights $weights --hyp $hyp --patience $patience --device 0 --cache ram
 
 for filename in `echo $data | sed "s/.yaml/*.yaml/"`; do
 	
@@ -77,9 +70,9 @@ for filename in `echo $data | sed "s/.yaml/*.yaml/"`; do
 	if [ -n "$val_name" ]; then
 		val_name=${val_name,,}
 		val_name=${val_name^}
-		val_name=$name$val_name
+		val_name=$runName$val_name
 	else
-		val_name=$name
+		val_name=$runName
 	fi
 	
 	if [[ $val_name == *"val"* ]] || [[ $val_name == *"Val"* ]]; then
