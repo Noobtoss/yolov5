@@ -47,10 +47,15 @@ fi
 : $data
 : ${_%.*}
 : $(basename $_)
-runName=${_,,}
+: ${_,,}
+runName=$_
+: ${cfg%.*}
+: ${_,,}
+: ${_^}
+runName=$runName$_
 
 if [ $name != "None" ]; then
-	runName=$runName${info^}
+	runName=$runName${name^}
 fi
 
 export WANDB_API_KEY=95177947f5f36556806da90ea7a0bf93ed857d58
