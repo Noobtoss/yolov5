@@ -53,7 +53,7 @@ eval "$(conda shell.bash hook)"
 
 conda activate yolov5
 
-if [ $task == "val" ] || [ $task == "test" ]; then
+if [ $task == "train" ] || [ $task == "val" ] || [ $task == "test" ]; then
 	
     srun python val.py --img $img --data $data --name $task$name --weights $weights --task $task
 
