@@ -54,11 +54,11 @@ conda activate yolov5
 
 if [ $task == "train" ] || [ $task == "val" ] || [ $task == "test" ]; then
 	
-    srun python val.py --img $img --data $data --name $task$name --weights $weights --task $task
+    srun python val.py --img $img --data $data --name $name${task^} --weights $weights --task $task
 
 elif [ $task == "detect" ]; then
     
-    srun python detect.py --img $img --source $data --name $task$name --weights $weights --nosave --save-txt --save-crop --save-conf
+    srun python detect.py --img $img --source $data --name $name${task^} --weights $weights --nosave --save-txt --save-crop --save-conf
 
 else
   echo "Unknown Task"
