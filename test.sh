@@ -45,7 +45,6 @@ if [ $name == "None" ]; then
      : ${_^}
      name=$_
 fi
-echo $name
 
 module purge
 module load python/anaconda3
