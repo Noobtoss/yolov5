@@ -50,7 +50,7 @@ fi
 runName=${_,,}
 
 if [ $name != "None" ]; then
-	runName=$runName$info
+	runName=$runName${info^}
 fi
 
 export WANDB_API_KEY=95177947f5f36556806da90ea7a0bf93ed857d58
