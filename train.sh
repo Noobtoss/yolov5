@@ -84,9 +84,11 @@ for filename in `echo $data | sed "s/.yaml/*.yaml/"`; do
                 srun python val.py --img $img --data $filename --name $valName"Last"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task test
         
 	else
-		srun python val.py --img $img --data $filename --name $valName"Best"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task train
-		srun python val.py --img $img --data $filename --name $valName"Last"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task train
-
+		srun python val.py --img $img --data $filename --name $valName"ValBest"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task val
+		srun python val.py --img $img --data $filename --name $valName"ValLast"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task val
+		
+		srun python val.py --img $img --data $filename --name $valName"TestBest"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task test
+                srun python val.py --img $img --data $filename --name $valName"TestLast"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task test
 	fi
 
 done
