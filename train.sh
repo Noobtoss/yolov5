@@ -64,28 +64,28 @@ srun python train.py --img $img --batch $batch --epochs $epochs --data $data --n
 
 for filename in `echo $data | sed "s/.yaml/*.yaml/"`; do
 	
-	val_name=${filename#"${data%.*}"}
-	val_name=${val_name%.*}
+	valName=${filename#"${data%.*}"}
+	valName=${valName%.*}
 	
-	if [ -n "$val_name" ]; then
-		val_name=${val_name,,}
-		val_name=${val_name^}
-		val_name=$runName$val_name
+	if [ -n "$valName" ]; then
+		valName=${valName,,}
+		valName=${valName^}
+		valName=$runName$valName
 	else
-		val_name=$runName
+		valName=$runName
 	fi
 	
 	if [[ $val_name == *"val"* ]] || [[ $val_name == *"Val"* ]]; then
-		srun python val.py --img $img --data $filename --name $val_name"Best"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task val
-		srun python val.py --img $img --data $filename --name $val_name"Last"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task val
+		srun python val.py --img $img --data $filename --name $valName"Best"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task val
+		srun python val.py --img $img --data $filename --name $valName"Last"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task val
 
 	elif [[ $val_name == *"test"* ]] || [[ $val_name == *"Test"* ]]; then
-                srun python val.py --img $img --data $filename --name $val_name"Best"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task test
-                srun python val.py --img $img --data $filename --name $val_name"Last"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task test
+                srun python val.py --img $img --data $filename --name $valName"Best"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task test
+                srun python val.py --img $img --data $filename --name $valName"Last"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/last.pt --task test
         
 	else
-		srun python val.py --img $img --data $filename --name $val_name"Train"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task train
-		srun python val.py --img $img --data $filename --name $val_name"Train"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task train
+		srun python val.py --img $img --data $filename --name $valName"Train"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task train
+		srun python val.py --img $img --data $filename --name $valName"Train"-$SLURM_JOB_ID --weights ./runs/train/$name-$SLURM_JOB_ID/weights/best.pt --task train
 
 	fi
 
