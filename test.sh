@@ -26,7 +26,7 @@ while [ $# -gt 0 ]; do
     -d|-data|--data)       data="$2"   ;;
     -w|-weights|--weights) weights="$2";;
     -n|-name|--name)       name="$2"   ;;
-    -t|-task|--task)              task="$2"   ;;
+    -t|-task|--task)       task="$2"   ;;
     *)
       printf "***************************\n"
       printf "* Error: Invalid argument.*\n"
