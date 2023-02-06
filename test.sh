@@ -42,7 +42,7 @@ if [ $name == "None" ]; then
      : ${_%.*}
      : $(basename $_)
      : ${_,,}
-     # : ${_^} #yolov7 forces lowercase name
+     : ${_^}
      name=$_
 fi
 
@@ -53,12 +53,12 @@ eval "$(conda shell.bash hook)"
 conda activate yolov5
 
 if [ $task == "train" ] || [ $task == "val" ] || [ $task == "test" ]; then
-
-    srun python test.py --img $img --data $data --name $name"_"$task --weights $weights --task $task #yolov7 forces lowercase name
+	
+    srun python val.py --img $img --data $data --name $name${task^} --weights $weights --task $task
 
 elif [ $task == "detect" ]; then
     
-    srun python detect.py --img $img --source $data --name $name"_"$task --weights $weights --save-txt --save-conf #yolov7 forces lowercase name
+    srun python detect.py --img $img --source $data --name $name${task^} --weights $weights --nosave --save-txt --save-crop --save-conf
 
 else
   echo "Unknown Task"
