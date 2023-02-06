@@ -80,11 +80,11 @@ for filename in `echo $data | sed "s/.yaml/*.yaml/"`; do
 		valName=$runName
 	fi
 	
-	if [[ $val_name == *"val"* ]] || [[ $val_name == *"Val"* ]]; then
+	if [[ $valName == *"val"* ]] || [[ $valName == *"Val"* ]]; then
 		srun python val.py --img $img --data $filename --name $valName"Best"-$SLURM_JOB_ID --weights ./runs/train/$runName-$SLURM_JOB_ID/weights/best.pt --task val
 		srun python val.py --img $img --data $filename --name $valName"Last"-$SLURM_JOB_ID --weights ./runs/train/$runName-$SLURM_JOB_ID/weights/last.pt --task val
 
-	elif [[ $val_name == *"test"* ]] || [[ $val_name == *"Test"* ]]; then
+	elif [[ $valName == *"test"* ]] || [[ $valName == *"Test"* ]]; then
                 srun python val.py --img $img --data $filename --name $valName"Best"-$SLURM_JOB_ID --weights ./runs/train/$runName-$SLURM_JOB_ID/weights/best.pt --task test
                 srun python val.py --img $img --data $filename --name $valName"Last"-$SLURM_JOB_ID --weights ./runs/train/$runName-$SLURM_JOB_ID/weights/last.pt --task test
         
