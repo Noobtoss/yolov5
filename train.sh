@@ -63,7 +63,7 @@ module purge
 module load python/anaconda3
 eval "$(conda shell.bash hook)"
 
-conda activate yolov5
+conda activate yolo
 
 srun python train.py --img $img --batch $batch --epochs $epochs --data $data --name $runName-$SLURM_JOB_ID --cfg $cfg --weights $weights --hyp $hyp --patience $patience --device 0 --cache ram
 

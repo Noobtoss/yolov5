@@ -50,7 +50,7 @@ module purge
 module load python/anaconda3
 eval "$(conda shell.bash hook)"
 
-conda activate yolov5
+conda activate yolo
 
 if [ $task == "train" ] || [ $task == "val" ] || [ $task == "test" ]; then
 	
