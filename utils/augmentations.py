@@ -34,10 +34,10 @@ class Albumentations:
                 
                 T = [
                     A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
-                    A.Blur(p=0.05),
-                    A.MedianBlur(p=0.05),
-                    A.ToGray(p=0.05),
-                    A.CLAHE(p=0.05),
+                    A.Blur(p=0.01),
+                    A.MedianBlur(p=0.01),
+                    A.ToGray(p=0.01),
+                    A.CLAHE(p=0.01),
                     A.RandomBrightnessContrast(p=0.0),
                     A.RandomGamma(p=0.0),
                     A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
@@ -126,7 +126,8 @@ class Albumentations:
                 T = [
                     A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.1),
                     A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
-                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0)]
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0)
+                    ]
 
                 self.transform_pre = A.Compose(T_pre)
                 self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', min_area=100, label_fields=['class_labels']))
@@ -138,7 +139,7 @@ class Albumentations:
                 T = [
                     A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.05),
                     A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
-                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0)
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
                     A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
                     A.Blur(p=0.05),
                     A.MedianBlur(p=0.05),
@@ -146,10 +147,12 @@ class Albumentations:
                     A.CLAHE(p=0.05),
                     A.RandomBrightnessContrast(p=0.0),
                     A.RandomGamma(p=0.0),
-                    A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
-                ]
-                
-            
+                    A.ImageCompression(quality_lower=75, p=0.0)
+                    ]
+
+                self.transform_pre = A.Compose(T_pre)
+                self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', min_area=100, label_fields=['class_labels']))
+                              
             LOGGER.info(prefix + ', '.join(f'{x}'.replace('always_apply=False, ', '') for x in T if x.p))
         except ImportError:#  # package not installed, skip
             pass
