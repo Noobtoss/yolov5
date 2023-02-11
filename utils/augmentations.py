@@ -28,15 +28,16 @@ class Albumentations:
         try:
             import albumentations as A
             check_version(A.__version__, '1.0.3', hard=True)  # version requirement
-            version = 6  # 0=standAug 1=noAug 2=selectAug 3=selectAug+ 4=standAug_selectAug+_scaleAug 5=scaleAug 6=Dropout
+            version = 0  # 0=standAug 1=noAug 2=selectAug 3=selectAug+ 4=standAugSelectAug+scaleAug 5=scaleAug 6=Dropout 7=Dropout+standAug
             
             if version == 0:
                 
                 T = [
                     A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
-                    A.Blur(p=0.01),
-                    A.MedianBlur(p=0.01), A.ToGray(p=0.01),
-                    A.CLAHE(p=0.01),
+                    A.Blur(p=0.05),
+                    A.MedianBlur(p=0.05),
+                    A.ToGray(p=0.05),
+                    A.CLAHE(p=0.05),
                     A.RandomBrightnessContrast(p=0.0),
                     A.RandomGamma(p=0.0),
                     A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
@@ -129,6 +130,25 @@ class Albumentations:
 
                 self.transform_pre = A.Compose(T_pre)
                 self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', min_area=100, label_fields=['class_labels']))
+                    
+            if version == 7:
+               
+                T_pre = [A.CoarseDropout(max_holes=20, max_height=0.03, max_width=0.03, min_holes=10, min_height=0.01, min_width=0.01, fill_value=0, p=0.05)]
+                
+                T = [
+                    A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.05),
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0)
+                    A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
+                    A.Blur(p=0.05),
+                    A.MedianBlur(p=0.05),
+                    A.ToGray(p=0.05),
+                    A.CLAHE(p=0.05),
+                    A.RandomBrightnessContrast(p=0.0),
+                    A.RandomGamma(p=0.0),
+                    A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
+                ]
+                
             
             LOGGER.info(prefix + ', '.join(f'{x}'.replace('always_apply=False, ', '') for x in T if x.p))
         except ImportError:#  # package not installed, skip
