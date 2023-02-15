@@ -28,7 +28,7 @@ class Albumentations:
         try:
             import albumentations as A
             check_version(A.__version__, '1.0.3', hard=True)  # version requirement
-            version = 0 # 0=standAug 1=noAug 2=selectAug 3=selectAug+ 4=standAugSelectAug+scaleAug 5=scaleAug 6=Dropout 7=Dropout+standAug
+            version = 7 # 0=standAug 1=noAug 2=selectAug 3=selectAug+ 4=standAugSelectAug+scaleAug 5=scaleAug 6=Dropout 7=Dropout+standAug
             
             if version == 0:
                 
@@ -138,8 +138,8 @@ class Albumentations:
                 
                 T = [
                     A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.05),
-                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
-                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=1.0),
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.4, 0.1), rotate_limit=0, interpolation=1, border_mode=0, rotate_method='ellipse', p=0.2),
+                    A.ShiftScaleRotate(shift_limit=0.0, scale_limit=0.2, rotate_limit=45, interpolation=1, border_mode=0, rotate_method='ellipse', p=0.2),
                     A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
                     A.Blur(p=0.05),
                     A.MedianBlur(p=0.05),
