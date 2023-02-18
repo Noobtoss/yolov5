@@ -173,7 +173,9 @@ class Albumentations:
                     new = random.choice(self.transform)(image=im, bboxes=labels[:, 1:], class_labels=labels[:, 0]) # transformed
                 else:
                     new = self.transform(image=im, bboxes=labels[:, 1:], class_labels=labels[:, 0])  # transformed
-                im, labels = new['image'], np.array([[c, *b] for c, b in zip(new['class_labels'], new['bboxes'])])
+                    
+                if len(new["class_labels"]) > 0: # skip update if no bbox in new im
+                    im, labels = new['image'], np.array([[c, *b] for c, b in zip(new['class_labels'], new['bboxes'])])
 
         return im, labels
 
