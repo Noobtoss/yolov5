@@ -11,11 +11,11 @@
 
 img=640
 batch=32 #128
-epochs=200
+epochs=150
 patience=50
-data=/mnt/md0/user/schmittth/datasets/semmel/yoloSetups/semmel17.yaml
+data=/mnt/md0/user/schmittth/mueller2/datasets/semmel/yoloSetups/semmel38.yaml
 hyp=hyp.scratch-low.yaml
-cfg=yolov5s.yaml #yolov5m.yaml #yolov5l.yaml #yolov5x.yaml
+cfg=yolov5l.yaml #yolov5m.yaml #yolov5l.yaml #yolov5x.yaml
 weights=None
 name=None
 

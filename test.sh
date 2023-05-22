@@ -10,7 +10,7 @@
 #SBATCH --mem=64G                # RAM pro CPU Kern #20G #32G #64G
 
 img=640
-data=/mnt/md0/user/schmittth/datasets/semmel/setups/semmel17.yaml #either serves as data for val.py or source for detect.py
+data=/mnt/md0/user/schmittth/mueller2/datasets/semmel/setups/semmel17.yaml #either serves as data for val.py or source for detect.py
 weights=None
 name=None
 task=test

@@ -134,7 +134,7 @@ class Albumentations:
                     
             if version == 7:
                
-                T_pre = [A.CoarseDropout(max_holes=20, max_height=0.03, max_width=0.03, min_holes=10, min_height=0.01, min_width=0.01, fill_value=0, p=0.05)]
+                T_pre = [A.CoarseDropout(max_holes=50, max_height=0.1, max_width=0.1, min_holes=10, min_height=0.01, min_width=0.01, fill_value=0, p=0.2)]
                 
                 T = [
                     A.PixelDropout(dropout_prob=0.05, per_channel=False, drop_value=0, p=0.05),
